@@ -1,0 +1,11 @@
+FROM python:3.11.0
+
+RUN apt-get update
+
+COPY . .
+
+RUN pip install -r requirements.txt
+
+RUN cd src && python -m database.py && python -m locaiton/services.py
+
+CMD python -m main

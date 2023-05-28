@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:14.6-alpine
+    env_file:
+      - .env
+    environment:
+      POSTGRES_URL: ${DB_URL}
+    volumes:
+      - ./pddata:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile-fastapi
+    tty: false
+    restart: on-failure
+    ports:
+      - "8000:${SERVER_PORT}"
+    env_file:
+      - .env
+    volumes:
+      - .src/:.src/
+    depends_on:
+      - db

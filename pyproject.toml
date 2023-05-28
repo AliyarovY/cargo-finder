@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "cargo-finder"
+version = "0.1.0"
+description = ""
+authors = ["-- <yaliyarov@mail.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = { extras = ["all"], version = "^0.95.2" }
+sqlalchemy = "^2.0.15"
+psycopg2-binary = "^2.9.6"
+uvicorn = "^0.22.0"
+python-dotenv = "^1.0.0"
+geopy = "^2.3.0"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
