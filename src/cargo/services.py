@@ -39,7 +39,7 @@ class CargoService(APIServiceMixin):
     def list(
             self,
             query_wght: int | None,
-            query_mls: bool,
+            query_distance: bool,
     ) -> list[models.CargoInList]:
         query_responces = (
             self.session
@@ -58,11 +58,11 @@ class CargoService(APIServiceMixin):
             nearby_cars = self._get_nearby_cars(cargo.pick_up_location_id)
 
             # set more info
-            if any(x for x in [query_wght, query_mls]):
+            if any(x for x in [query_wght, query_distance]):
                 more = models.MoreInListInfo()
                 if query_wght:
                     more.weight = query_wght
-                if query_mls:
+                if query_distance:
                     more.nearby_cars_mile_disctances = [
                         get_distanse_beteween_locations_by_id(
                             car.location_id, cargo.pick_up_location_id,

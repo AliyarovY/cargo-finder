@@ -20,7 +20,7 @@ class CarService(APIServiceMixin):
         self.session.commit()
         return models.CarRead(id=car.id, location=location, **car_data.dict())
 
-    def get_distance(self, distance_data: models.DistanceCreate) -> dict[str, int]:
+    def get_distance(self, distance_data: models.DistanceCreate) -> models.DistanceRead:
         car_location = self._get_location_by_car(distance_data.car_id)
         main_location = get_location(
             distance_data.location_id,
@@ -31,7 +31,7 @@ class CarService(APIServiceMixin):
         res_distance = distance(main_point, car_point).miles
         return models.DistanceRead(distance=res_distance)
 
-    def update(self, car_id: int, update_data) -> tables.Car:
+    def update(self, car_id: int, update_data) -> models.CarRead:
         update_data = {k: v for k, v in update_data.dict().items() if not v is None}
         car = get_by(tables.Car, self.session, id=car_id)
 

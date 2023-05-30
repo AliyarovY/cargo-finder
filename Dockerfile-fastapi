@@ -12,8 +12,6 @@ RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
 
-#RUN python -m src.db_start
+RUN python -m src.db_start
 
-#CMD ["src.main"]
-
-CMD ["bash", "-c", "while true; do sleep 1; done"]
+CMD ["src.main"]

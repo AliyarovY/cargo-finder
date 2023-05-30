@@ -32,9 +32,9 @@ async def cargo_create(
 async def get_cargo_list(
         service: CargoService = Depends(),
         weight: int | None = Query(default=None),
-        miles: bool = Query(default=False),
+        disctance: bool = Query(default=False),
 ):
-    return service.list(weight, miles)
+    return service.list(weight, disctance)
 
 
 @cargo_router.get(
