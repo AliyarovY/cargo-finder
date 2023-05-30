@@ -1,4 +1,4 @@
-# for start using
+### for start using
 
 add cargo-finder/.env (look at .env.example)
 
