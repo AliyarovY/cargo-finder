@@ -2,10 +2,18 @@ FROM python:3.11.0
 
 RUN apt-get update
 
-COPY . .
+COPY . cargo-finder/
+
+WORKDIR cargo-finder
+
+ENV PYTHONPATH=/cargo-finder:/cargo-finder/src
+
+RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
 
-RUN cd src && python -m database.py && python -m locaiton/services.py
+#RUN python -m src.db_start
 
-CMD python -m main
+#CMD ["src.main"]
+
+CMD ["bash", "-c", "while true; do sleep 1; done"]

@@ -3,23 +3,22 @@ from fastapi import HTTPException
 from geopy.distance import distance
 from starlette import status
 
+from location.models import LocationRead
 from src import tables
 from src.base.services import APIServiceMixin
 from src.base.utils import get_by
 from src.car import models
-from src.location.db_logic import get_location, get_location_by
+from src.location.logic import get_location, get_location_by, get_random_location
 
 
 class CarService(APIServiceMixin):
     def create(self, car_data: models.CarCreate) -> models.CarRead:
-        car_data = car_data.dict()
-        location = car_data.pop('location')
+        location = LocationRead.from_orm(get_random_location())
         location_id = location.id
-        response_car = models.CarRead(id=location_id, **car_data, location=location)
-        car = tables.Car(location_id=location_id, **car_data)
+        car = tables.Car(**car_data.dict(), location_id=location_id)
         self.session.add(car)
         self.session.commit()
-        return response_car
+        return models.CarRead(id=car.id, location=location, **car_data.dict())
 
     def get_distance(self, distance_data: models.DistanceCreate) -> dict[str, int]:
         car_location = self._get_location_by_car(distance_data.car_id)
@@ -30,7 +29,7 @@ class CarService(APIServiceMixin):
         main_point = (main_location.lat, main_location.lng)
         car_point = (car_location.lat, car_location.lng)
         res_distance = distance(main_point, car_point).miles
-        return {'miles': res_distance}
+        return models.DistanceRead(distance=res_distance)
 
     def update(self, car_id: int, update_data) -> tables.Car:
         update_data = {k: v for k, v in update_data.dict().items() if not v is None}

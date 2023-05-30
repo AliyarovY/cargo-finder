@@ -8,6 +8,10 @@ from starlette import status
 
 from src import tables
 
+def get_random_orm_obj(orm_table, session: Session) -> tables.Base:
+    output = random.choice(session.query(orm_table).all())
+    return output
+
 
 def get_by(table: tables.Base, session: Session, **kwargs) -> tables.Base:
     exp = HTTPException(
@@ -27,19 +31,21 @@ def get_by(table: tables.Base, session: Session, **kwargs) -> tables.Base:
     return output
 
 
-def full_up_cars(cnt: int = 20) -> None:
-    session = Session()
+def full_up_cars(session, cnt: int = 20) -> None:
     nbrs = {car.unique_number for car in session.query(tables.Car.unique_number).all()}
-    unique_number = list(nbrs)[0]
+    get_un_nb = lambda: str(random.randint(1000, 9999)) + random.choice(string.ascii_uppercase)
     try:
         for _ in range(cnt):
-            while unique_number in nbrs:
-                unique_number = str(random.randint(1000, 9999)) + random.choice(string.ascii_uppercase)
-                location_id = random.randint(5, 110)
-                capacity = random.randint(1, 1000)
-                car = tables.Car(location_id=location_id, unique_number=unique_number, capacity=capacity)
-                session.add(car)
-                session.commit()
-                nbrs.add(car.unique_number)
+            while True:
+                unique_number = get_un_nb()
+                if unique_number in nbrs:
+                    continue
+                break
+            location_id = get_random_orm_obj(tables.Location, session).id
+            capacity = random.randint(1, 1000)
+            car = tables.Car(location_id=location_id, unique_number=unique_number, capacity=capacity)
+            session.add(car)
+            session.commit()
+            nbrs.add(car.unique_number)
     finally:
         session.close()

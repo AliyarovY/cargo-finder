@@ -5,7 +5,7 @@ from src.base.services import APIServiceMixin
 from src.base.utils import get_by
 from src.car.models import CarWithDistance
 from src.cargo import models
-from src.location.db_logic import get_location_by, get_distanse_beteween_locations_by_id, get_location
+from src.location.logic import get_location_by, get_distanse_beteween_locations_by_id, get_location
 from src.location.models import LocationRead
 
 
@@ -66,7 +66,7 @@ class CargoService(APIServiceMixin):
                     more.nearby_cars_mile_disctances = [
                         get_distanse_beteween_locations_by_id(
                             car.location_id, cargo.pick_up_location_id,
-                            self.session).miles
+                            self.session)
                         for car in nearby_cars
                     ]
 
@@ -128,10 +128,10 @@ class CargoService(APIServiceMixin):
         cars_list = [
             CarWithDistance(
                 unique_number=car.unique_number,
-                miles_distance=get_distanse_beteween_locations_by_id(
+                distance=get_distanse_beteween_locations_by_id(
                     pick_up_location.id, car.location_id,
                     session=self.session,
-                ).miles
+                )
             )
             for car in cars
         ]
@@ -165,5 +165,5 @@ class CargoService(APIServiceMixin):
             car
             for car in query
             if get_distanse_beteween_locations_by_id(car.location_id, pick_up_location_id,
-                                                     session=self.session).miles <= self.MAX_CARGO_CAR_BETWEEN_DISTANCE
+                                                     session=self.session) <= self.MAX_CARGO_CAR_BETWEEN_DISTANCE
         ]

@@ -1,7 +1,6 @@
 import csv
 
 from src.base.services import APIServiceMixin
-from src.config import BASE_DIR
 from src.database import get_session
 from src.location import models
 from src import tables
@@ -19,12 +18,18 @@ class LocationService(APIServiceMixin):
     def __init__(self):
         self.session = next(get_session())
 
-    def import_to_db_csv(self, file):
+    def import_csv_to_db(self, file):
         reader = csv.DictReader(
             file,
             fieldnames=self.report_fields,
         )
         next(reader, None)  # Skip the header
+
+        used_zip_codes = {
+            locaiton.zip
+            for locaiton in
+            self.session.query(tables.Location).all()
+        }
         locations_data = [
             models.LocationCreate(
                 city=row['city'],
@@ -34,8 +39,11 @@ class LocationService(APIServiceMixin):
                 lng=row['lng'],
             )
             for row in reader
+            if row['zip'] not in used_zip_codes
         ]
+
         self.create_many(locations_data)
+
 
     def create_many(
             self,
@@ -50,8 +58,3 @@ class LocationService(APIServiceMixin):
         self.session.add_all(locations)
         self.session.commit()
         return locations
-
-
-if __name__ == '__main__':
-    with open(BASE_DIR / 'uszips.csv') as csvfile:
-        LocationService().import_to_db_csv(csvfile)

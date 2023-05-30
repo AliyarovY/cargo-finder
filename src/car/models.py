@@ -4,7 +4,7 @@ from pydantic import BaseModel, validator, Field
 
 from src import tables
 from src.database import get_session
-from src.location.db_logic import get_random_location
+from src.location.logic import get_random_location
 from src.location.models import LocationRead
 
 
@@ -32,13 +32,13 @@ class ChangeBase(BaseCarModel):
     @validator('capacity')
     def check_capacity_is_valid(cls, v):
         mn, mx = 0, 1001
-        if not mn <= v <= mx:
+        if not mn < v < mx:
             raise ValueError(f'Capacity must be greater than {mn} and less than {mx} .')
         return v
 
 
 class CarCreate(ChangeBase):
-    location: LocationRead = Field(default_factory=get_random_location)
+    ...
 
 
 class CarRead(BaseCarModel):
@@ -50,7 +50,7 @@ class CarRead(BaseCarModel):
 
 
 class DistanceRead(BaseModel):
-    miles: int
+    distance: int
 
 
 class DistanceCreate(BaseModel):
@@ -60,7 +60,7 @@ class DistanceCreate(BaseModel):
 
 class CarWithDistance(BaseModel):
     unique_number: str
-    miles_distance: int
+    distance: int
 
 
 class CarUpdate(ChangeBase):

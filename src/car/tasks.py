@@ -3,7 +3,7 @@ from asyncio import sleep
 from sqlalchemy.orm import Session
 
 from src import tables
-from src.location.db_logic import get_random_location
+from src.location.logic import get_random_location
 
 
 async def set_car_random_location_id(seconds=180):
